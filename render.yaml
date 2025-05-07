@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: emotion-ocr-app
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
