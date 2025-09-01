@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all domains
 
 # Load model and tokenizer
-model = load_model("emotion_lstm_model.h5")
+model = load_model("emotion_bilstm_model.h5")
 with open("tokenizer.pickle", "rb") as handle:
     tokenizer = pickle.load(handle)
 
