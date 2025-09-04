@@ -24,6 +24,7 @@ emotion_classes = ["anger", "fear", "joy", "love", "sadness", "surprise"]
 label_encoder = LabelEncoder()
 label_encoder.fit(emotion_classes)
 
+# OCR function
 def perform_ocr(image_path):
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -31,6 +32,7 @@ def perform_ocr(image_path):
     extracted_text = pytesseract.image_to_string(gray)
     return re.sub(r'\s+', ' ', extracted_text).strip()
 
+# Prediction function
 def predict_emotion(text, max_length=100):
     seq = tokenizer.texts_to_sequences([text])
     padded_seq = pad_sequences(seq, maxlen=max_length)
@@ -38,6 +40,12 @@ def predict_emotion(text, max_length=100):
     predicted_label = np.argmax(prediction)
     return label_encoder.inverse_transform([predicted_label])[0]
 
+# Root route (for testing / health check)
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "API is running. Use POST /predict with an image."})
+
+# Prediction route
 @app.route("/predict", methods=["POST"])
 def predict():
     if "image" not in request.files:
@@ -60,7 +68,5 @@ def predict():
         os.remove(image_path)
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
