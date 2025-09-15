@@ -11,6 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 import os
 import tempfile
 
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all domains
 

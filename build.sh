@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Exit on error
-set -o errexit  
+set -o errexit
 
-# Install Tesseract
+# Install Tesseract OCR
+export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt-get install -y tesseract-ocr libtesseract-dev
 
 # Install Python dependencies
