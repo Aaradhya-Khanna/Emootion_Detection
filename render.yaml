@@ -1,6 +1,10 @@
 services:
   - type: web
-    name: emotion-ocr-app
-    env: docker
+    name: emotion-ocr-api
+    env: python
     plan: free
-    dockerfilePath: ./Dockerfile
+    buildCommand: ./build.sh
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PORT
+        value: 5000

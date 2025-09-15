@@ -16,6 +16,7 @@ CORS(app)  # Enable CORS for all domains
 
 # Load model and tokenizer
 model = load_model("emotion_bilstm_model.h5")
+
 with open("tokenizer.pickle", "rb") as handle:
     tokenizer = pickle.load(handle)
 
@@ -23,6 +24,7 @@ with open("tokenizer.pickle", "rb") as handle:
 emotion_classes = ["anger", "fear", "joy", "love", "sadness", "surprise"]
 label_encoder = LabelEncoder()
 label_encoder.fit(emotion_classes)
+
 
 # OCR function
 def perform_ocr(image_path):
@@ -32,6 +34,7 @@ def perform_ocr(image_path):
     extracted_text = pytesseract.image_to_string(gray)
     return re.sub(r'\s+', ' ', extracted_text).strip()
 
+
 # Prediction function
 def predict_emotion(text, max_length=100):
     seq = tokenizer.texts_to_sequences([text])
@@ -40,10 +43,12 @@ def predict_emotion(text, max_length=100):
     predicted_label = np.argmax(prediction)
     return label_encoder.inverse_transform([predicted_label])[0]
 
+
 # Root route (for testing / health check)
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "API is running. Use POST /predict with an image."})
+
 
 # Prediction route
 @app.route("/predict", methods=["POST"])
@@ -52,20 +57,23 @@ def predict():
         return jsonify({"error": "No image uploaded"}), 400
 
     image_file = request.files["image"]
-    
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp:
         image_file.save(temp.name)
         image_path = temp.name
 
     try:
         text = perform_ocr(image_path)
+
         if not text:
             return jsonify({"error": "No text detected in the image"}), 200
-        
+
         emotion = predict_emotion(text)
         return jsonify({"text": text, "emotion": emotion})
+
     finally:
         os.remove(image_path)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
